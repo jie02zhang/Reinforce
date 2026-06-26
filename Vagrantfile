@@ -104,7 +104,7 @@ Vagrant.configure("2") do |config|
   # ================= SUSE 15 SP7 =================
   config.vm.define "suse15" do |node|
     node.vm.hostname = "suse15"
-    node.vm.box = "bento/opensuse-leap-15.7"
+    node.vm.box = "opensuse/Leap-15.6.x86_64"
     # node.vm.network "private_network", type: "dhcp"  # 注释掉，避免 Host-only 冲突
     
     node.disksize.size = "20GB"
