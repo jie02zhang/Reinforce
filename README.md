@@ -1,6 +1,6 @@
 # 跨平台系统安全加固脚本
 
-[![Version](https://img.shields.io/badge/version-v6.0-green.svg)](https://github.com/example/security_hardening/releases)
+[![Version](https://img.shields.io/badge/version-v6.0-green.svg)](https://github.com/zjjsj1985/Reinforce/releases)
 [![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)]()
 [![Tested](https://img.shields.io/badge/tested-4_distributions-blue.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -189,12 +189,12 @@ bash test_results/run_all_tests.sh all verbose
 
 ## 📧 联系方式
 
-- **Issue Tracker**: https://github.com/example/security_hardening/issues
-- **Documentation**: https://github.com/example/security_hardening/docs
+- **Issue Tracker**: https://github.com/zjjsj1985/Reinforce/issues
+- **Documentation**: https://github.com/zjjsj1985/Reinforce/docs
 - **Email**: security@example.com
 
 ---
 
-**下载 v6.0**: [GitHub Releases](https://github.com/example/security_hardening/releases/tag/v6.0)
+**下载 v6.0**: [GitHub Releases](https://github.com/zjjsj1985/Reinforce/releases/tag/v6.0)
 
 **最后更新**: 2026-06-27

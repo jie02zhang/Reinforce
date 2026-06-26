@@ -1,0 +1,80 @@
+# Docker Compose 配置 - 多发行版安全加固测试环境
+# 用法: docker-compose up -d
+
+services:
+  # Ubuntu 22.04 LTS
+  ubuntu:
+    image: ubuntu:22.04
+    container_name: security-test-ubuntu
+    hostname: ubuntu-test
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+      - SYS_TIME
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - ./security_hardening.sh:/tmp/security_hardening.sh:ro
+      - ./health_check.sh:/tmp/health_check.sh:ro
+      - ./test_results:/test_results
+    command: >
+      bash -c "
+        apt-get update -qq &&
+        apt-get install -y systemd openssh-server sudo cron net-tools iproute2 procps &&
+        exec /sbin/init
+      "
+    networks:
+      - security-test
+
+  # CentOS Stream 9
+  centos:
+    image: centos:stream9
+    container_name: security-test-centos
+    hostname: centos-test
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+      - SYS_TIME
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - ./security_hardening.sh:/tmp/security_hardening.sh:ro
+      - ./health_check.sh:/tmp/health_check.sh:ro
+      - ./test_results:/test_results
+    command: >
+      bash -c "
+        yum install -y systemd openssh-server sudo cronie net-tools procps-ng &&
+        exec /sbin/init
+      "
+    networks:
+      - security-test
+
+  # openSUSE Leap 15.5
+  opensuse:
+    image: opensuse/leap:15.5
+    container_name: security-test-opensuse
+    hostname: opensuse-test
+    privileged: true
+    cap_add:
+      - SYS_ADMIN
+      - NET_ADMIN
+      - SYS_TIME
+    security_opt:
+      - seccomp:unconfined
+    volumes:
+      - ./security_hardening.sh:/tmp/security_hardening.sh:ro
+      - ./health_check.sh:/tmp/health_check.sh:ro
+      - ./test_results:/test_results
+    command: >
+      bash -c "
+        zypper --non-interactive install systemd openssh sudo cron net-tools procps &&
+        exec /sbin/init
+      "
+    networks:
+      - security-test
+
+networks:
+  security-test:
+    driver: bridge

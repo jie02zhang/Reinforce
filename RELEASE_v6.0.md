@@ -280,12 +280,12 @@ bash run_all_tests.sh all verbose
 
 ## 📧 联系方式和支持
 
-- **Issue Tracker**: https://github.com/example/security_hardening/issues
-- **Documentation**: https://github.com/example/security_hardening/docs
+- **Issue Tracker**: https://github.com/zjjsj1985/Reinforce/issues
+- **Documentation**: https://github.com/zjjsj1985/Reinforce/docs
 - **Email**: security@example.com
 
 ---
 
 **完整 Changelog 请查看 CHANGELOG.md**
 
-**下载 v6.0**: [GitHub Releases](https://github.com/example/security_hardening/releases/tag/v6.0)
+**下载 v6.0**: [GitHub Releases](https://github.com/zjjsj1985/Reinforce/releases/tag/v6.0)
