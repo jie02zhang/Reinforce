@@ -7,7 +7,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [6.0] - 2026-06-26
+## [6.1.0] - 2026-06-27
+
+### 🔧 Bug Fixes
+
+#### 1. **Fix SUSE 15 Support (Kernel Parameters)**
+- **Issue**: `sysctl` command not available on SUSE 15.6
+- **Root Cause**: SUSE 15.6 doesn't have `sysctl` installed by default
+- **Fix**: Modified `apply_sysctl_safe()` to:
+  - Check if `sysctl` is available
+  - If not, fall back to `/proc/sys/` filesystem
+  - Convert kernel parameter names to paths (e.g., `net.ipv4.tcp_syncookies` → `/proc/sys/net/ipv4/tcp_syncookies`)
+  - Apply parameters by writing directly to `/proc/sys/`
+- **Result**: ✅ All kernel parameters now correctly applied on SUSE 15.6
+
+#### 2. **Fix Package Installation on SUSE (zypper refresh)**
+- **Issue**: Package installation failed on SUSE due to expired repository metadata
+- **Root Cause**: `zypper` doesn't automatically refresh repository metadata before installing packages
+- **Fix**: Added `zypper --non-interactive refresh` before package installation on SUSE
+- **Result**: ✅ All packages now install successfully on SUSE 15.6
+
+---
+
+### ✅ Improvements
+
+- Enhanced cross-platform compatibility (now supports SUSE 15.6)
+- Improved error handling for kernel parameter configuration
+- Better package manager support (zypper refresh)
+
+---
+
+### 📊 Tested Distributions
+
+- ✅ Ubuntu 22.04 LTS
+- ✅ Ubuntu 24.04 LTS
+- ✅ Debian 12 (Bookworm)
+- ✅ Rocky Linux 9
+- ✅ **SUSE 15.6 (openSUSE Leap 15.6)** (NEW!)
+
+---
+
+### 📝 Script Version
+
+- **v6.0** → **v6.1**
+
+---
+
+## [6.0.0] - 2026-06-26
 
 ### 🎉 Major Release - Cross-Platform Support Complete
 
