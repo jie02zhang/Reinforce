@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 ###############################################################################
-# 跨平台系统安全加固脚本 v6.0 (Ubuntu 22.04 修复版)
+# 跨平台系统安全加固脚本 v6.1 (SUSE 15 修复版)
 # 支持: Ubuntu 18/20/22/24, Debian 11/12/13, RHEL 7/8/9, CentOS 7/9,
 #        AlmaLinux 8/9, Rocky 8/9, Amazon Linux 2/2023, SUSE 15,
 #        Oracle Linux, Alibaba Cloud Linux, EuroLinux, CloudLinux
 #        WSL 1/2 (Windows Subsystem for Linux)
 # 特性：幂等执行 / Dry-Run / 状态跟踪 / 跨发行版兼容 / WSL 兼容
+# v6.1: 修复 SUSE 15 支持（sysctl 不可用、zypper 仓库刷新、内核参数 via /proc/sys/）
 # v6.0: 修复 PAM 模块路径检测（支持多架构）、修复内核参数空格处理
 # v5.9: 修复 WSL 环境兼容性问题（NTP 交互输入、find 性能、服务管理）
 # v5.8: 完善内核参数处理（避免不支持参数报错）、权限设置每次都执行（确保600）
@@ -222,6 +223,8 @@ ensure_pkg() {
             dnf install -y "$pkg" >/dev/null 2>&1
             ;;
         zypper)
+            # 先刷新仓库（避免元数据过期导致安装失败）
+            zypper --non-interactive refresh >/dev/null 2>&1 || true
             zypper --non-interactive install -y "$pkg" >/dev/null 2>&1
             ;;
     esac
@@ -343,16 +346,48 @@ apply_sysctl_safe() {
         fi
     fi
     
-    # ★ 修复：先检查内核参数是否存在
-    if sysctl "${key}" >/dev/null 2>&1; then
+    # ★ 修复：先检查内核参数是否存在（兼容 sysctl 不可用的情况）
+    local sysctl_available=false
+    command -v sysctl &>/dev/null && sysctl_available=true
+    
+    local param_exists=false
+    if $sysctl_available; then
+        # 方法1：使用 sysctl 检查
+        if sysctl "${key}" >/dev/null 2>&1; then
+            param_exists=true
+        fi
+    else
+        # 方法2：直接检查 /proc/sys/ 文件系统
+        # 将 net.ipv4.tcp_syncookies 转换为 /proc/sys/net/ipv4/tcp_syncookies
+        local proc_path="/proc/sys/$(echo "${key}" | tr '.' '/')"
+        if [ -f "$proc_path" ]; then
+            param_exists=true
+        fi
+    fi
+    
+    if $param_exists; then
         # 参数存在，尝试设置
-        if sysctl -w "${key}=${val}" >/dev/null 2>&1; then
-            # 设置成功，更新配置文件
-            sed -i "\|^${escaped_key}\s*=|d" /etc/sysctl.conf 2>/dev/null
-            echo "${key} = ${val}" >> /etc/sysctl.conf
-            log_verbose "[OK] 内核参数已设置: ${key}=${val}"
+        if $sysctl_available; then
+            # 使用 sysctl 设置
+            if sysctl -w "${key}=${val}" >/dev/null 2>&1; then
+                # 设置成功，更新配置文件
+                sed -i "\|^${escaped_key}\s*=|d" /etc/sysctl.conf 2>/dev/null
+                echo "${key} = ${val}" >> /etc/sysctl.conf
+                log_verbose "[OK] 内核参数已设置: ${key}=${val}"
+            else
+                log "[WARN] 内核参数设置失败: ${key}"
+            fi
         else
-            log "[WARN] 内核参数设置失败: ${key}"
+            # 直接使用 /proc/sys/ 设置（立即生效）
+            local proc_path="/proc/sys/$(echo "${key}" | tr '.' '/')"
+            if echo "${val}" > "$proc_path" 2>/dev/null; then
+                # 设置成功，更新配置文件（重启后生效）
+                sed -i "\|^${escaped_key}\s*=|d" /etc/sysctl.conf 2>/dev/null
+                echo "${key} = ${val}" >> /etc/sysctl.conf
+                log_verbose "[OK] 内核参数已设置: ${key}=${val} (via /proc/sys/)"
+            else
+                log "[WARN] 内核参数设置失败: ${key}"
+            fi
         fi
     else
         log_verbose "[INFO] 内核不支持该参数，跳过: ${key}"
