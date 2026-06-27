@@ -1,8 +1,8 @@
 # 跨平台系统安全加固脚本
 
-[![Version](https://img.shields.io/badge/version-v6.0-green.svg)](https://github.com/zjjsj1985/Reinforce/releases)
+[![Version](https://img.shields.io/badge/version-v6.1-green.svg)](https://github.com/jie02zhang/Reinforce/releases)
 [![Platform](https://img.shields.io/badge/platform-Linux-lightgrey.svg)]()
-[![Tested](https://img.shields.io/badge/tested-4_distributions-blue.svg)]()
+[![Tested](https://img.shields.io/badge/tested-7_distributions-blue.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 一个功能强大、跨平台的 Linux 系统安全加固脚本，支持 15+ 主流发行版。
@@ -15,7 +15,7 @@
 
 ```bash
 # 下载脚本
-curl -O https://raw.githubusercontent.com/example/security_hardening/main/security_hardening.sh
+curl -O https://raw.githubusercontent.com/jie02zhang/Reinforce/main/security_hardening.sh
 
 # 赋予执行权限
 chmod +x security_hardening.sh
@@ -28,14 +28,14 @@ sudo bash security_hardening.sh --verbose
 
 ```bash
 # 一键下载并运行
-curl -fsSL https://raw.githubusercontent.com/example/security_hardening/main/install.sh | sudo bash -s -- --verbose
+curl -fsSL https://raw.githubusercontent.com/jie02zhang/Reinforce/main/install.sh | sudo bash -s -- --verbose
 ```
 
 ### 方法 3：使用安装脚本
 
 ```bash
 # 下载安装脚本
-curl -O https://raw.githubusercontent.com/example/security_hardening/main/install.sh
+curl -O https://raw.githubusercontent.com/jie02zhang/Reinforce/main/install.sh
 
 # 赋予执行权限
 chmod +x install.sh
@@ -83,9 +83,9 @@ sudo bash install.sh --verbose
 | | CentOS 7, 9 | 🟡 待测试 |
 | | AlmaLinux 8, 9 | 🟡 待测试 |
 | | Rocky Linux 8, 9 | ✅ 已测试 |
-| | Oracle Linux 7, 8, 9 | 🟡 待测试 |
-| **其他** | Amazon Linux 2, 2023 | 🟡 待测试 |
-| | SUSE 15 (SP1+) | 🟡 待测试 |
+| | Oracle Linux 7, 8, 9 | ✅ 已测试 |
+| **其他** | Amazon Linux 2, 2023 | ✅ 已测试 |
+| | SUSE 15 (SP1+) | ✅ 已测试 |
 | | Alibaba Cloud Linux 2, 3 | 🟡 待测试 |
 
 ---
@@ -131,21 +131,19 @@ sudo bash security_hardening.sh
 | Ubuntu | 24.04 | ✅ 通过 | 14/14 |
 | Debian | 12 | ✅ 通过 | 14/14 |
 | Rocky Linux | 9 | ✅ 通过 | 14/14 |
+| SUSE Linux | 15.6 | ✅ 通过 | 14/14 |
+| Oracle Linux | 9 | ✅ 通过 | 14/14 |
+| Amazon Linux | 2023 | ✅ 通过 | 14/14 |
 
-**测试覆盖率**: 4 个主流发行版  
-**总测试步骤**: 56 (14 步骤 × 4 发行版)  
-**通过率**: 100% (56/56)  
+**测试覆盖率**: 7 个主流发行版  
+**总测试步骤**: 98 (14 步骤 × 7 发行版)  
+**通过率**: 100% (98/98)  
 **幂等性**: ✅ 验证通过
 
-### 运行测试
-
-```bash
-# 运行单个测试
-sudo bash test_password_policy.sh verbose
-
-# 运行所有测试（需要 Vagrant）
-bash test_results/run_all_tests.sh all verbose
-```
+### 测试环境
+- **虚拟化平台**: Vagrant + VirtualBox
+- **测试方法**: 自动化测试脚本 + 手动验证
+- **测试报告**: [详细测试报告](test_results/cross_platform_test_report.md)
 
 ---
 
@@ -156,6 +154,7 @@ bash test_results/run_all_tests.sh all verbose
 | [README.md](README.md) | 项目说明和快速开始 |
 | [CHANGELOG.md](CHANGELOG.md) | 版本历史和修复记录 |
 | [RELEASE_v6.0.md](RELEASE_v6.0.md) | v6.0 发布说明 |
+| [RELEASE_v6.1.md](RELEASE_v6.1.md) | v6.1 发布说明 |
 | [SOP_Production_Deployment.md](SOP_Production_Deployment.md) | 生产部署 SOP |
 | [test_results/cross_platform_test_report.md](test_results/cross_platform_test_report.md) | 详细测试报告 |
 
@@ -189,12 +188,12 @@ bash test_results/run_all_tests.sh all verbose
 
 ## 📧 联系方式
 
-- **Issue Tracker**: https://github.com/zjjsj1985/Reinforce/issues
-- **Documentation**: https://github.com/zjjsj1985/Reinforce/docs
+- **Issue Tracker**: https://github.com/jie02zhang/Reinforce/issues
+- **Documentation**: https://github.com/jie02zhang/Reinforce/docs
 - **Email**: security@example.com
 
 ---
 
-**下载 v6.0**: [GitHub Releases](https://github.com/zjjsj1985/Reinforce/releases/tag/v6.0)
+**下载 v6.1**: [GitHub Releases](https://github.com/jie02zhang/Reinforce/releases/tag/v6.1)
 
 **最后更新**: 2026-06-27
