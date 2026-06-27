@@ -1494,18 +1494,6 @@ if ! is_completed "$STEP"; then
 *******************************************************************************
 *   The standard Company warning banner must be displayed at all logins.      *
 *                                                                             *
-*   This system is the property of Envision and is to be used only in         *
-*   accordance with applicable Envision policies.                             *
-*                                                                             *
-*   Unauthorized access or activity is prohibited and may constitute a        *
-*   violation of company policies and applicable laws.                        *
-*                                                                             *
-*   Use of this system constitutes consent to monitoring, recording, and      *
-*   auditing in accordance with Envision policies, local laws, and            *
-*   regulations.                                                              *
-*                                                                             *
-*   Unauthorized use may result in disciplinary action, including but not     *
-*   limited to reprimand, dismissal, financial penalties, and legal action.   *
 *******************************************************************************
 EOL
         log "[OK] MOTD 横幅已设置"
