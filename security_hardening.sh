@@ -1284,13 +1284,33 @@ if ! is_completed "$STEP"; then
                 SAFE_DIR="/etc/ssh/sshd_config.d"
                 USE_CONFIG_D=false
                 
+                # 检查是否支持 Include 指令（OpenSSH >= 8.2）
+                # 先检查是否已配置 Include
                 if [ -f /etc/ssh/sshd_config ] && grep -q "^Include.*sshd_config.d" /etc/ssh/sshd_config 2>/dev/null; then
                     USE_CONFIG_D=true
-                elif [ "$SSHD_V" -ge 7 ] 2>/dev/null; then
+                elif [ "$SSHD_V" -ge 9 ] 2>/dev/null; then
+                    # OpenSSH 9.x+ 肯定支持 Include
                     USE_CONFIG_D=true
                     if ! grep -q "^Include.*sshd_config.d" /etc/ssh/sshd_config 2>/dev/null; then
                         echo "Include /etc/ssh/sshd_config.d/*.conf" >> /etc/ssh/sshd_config 2>/dev/null
                         log "[EDIT] 已添加 Include 指令到 sshd_config（末尾，确保硬化优先）"
+                    fi
+                elif [ "$SSHD_V" -eq 8 ] 2>/dev/null; then
+                    # OpenSSH 8.x - 尝试使用 Include，如果失败则回退
+                    if ! grep -q "^Include.*sshd_config.d" /etc/ssh/sshd_config 2>/dev/null; then
+                        echo "Include /etc/ssh/sshd_config.d/*.conf" >> /etc/ssh/sshd_config 2>/dev/null
+                        # 验证配置是否有效
+                        if sshd -t 2>/dev/null; then
+                            USE_CONFIG_D=true
+                            log "[EDIT] 已添加 Include 指令到 sshd_config（OpenSSH 8.x）"
+                        else
+                            # Include 不支持，回退到直接编辑 sshd_config
+                            sed -i '/^Include.*sshd_config.d/d' /etc/ssh/sshd_config 2>/dev/null
+                            USE_CONFIG_D=false
+                            log "[WARN] OpenSSH 8.x 不支持 Include，将直接编辑 sshd_config"
+                        fi
+                    else
+                        USE_CONFIG_D=true
                     fi
                 fi
                 
