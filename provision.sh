@@ -168,8 +168,37 @@ setup_test_user() {
     # 允许 vagrant 用户无密码 sudo（方便测试）
     if id vagrant &>/dev/null; then
         echo "vagrant ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/vagrant
+        echo "Defaults !requiretty" >> /etc/sudoers.d/vagrant
         chmod 440 /etc/sudoers.d/vagrant
-        echo "[OK] vagrant 用户已配置无密码 sudo"
+        echo "[OK] vagrant 用户已配置无密码 sudo（已禁用 requiretty）"
+    fi
+}
+
+# ================= CentOS 7 特殊修复 =================
+fix_centos7() {
+    if [ "$DISTRO" = "centos" ] && [ "$VERSION" = "7" ]; then
+        echo "检测到 CentOS 7，应用特殊修复..."
+        
+        # 1. 修复仓库配置（切换到 vault.centos.org）
+        echo "1. 修复仓库配置..."
+        sed -i 's/mirrorlist=/#mirrorlist=/g' /etc/yum.repos.d/CentOS-*.repo
+        sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*.repo
+        echo "✅ 仓库已修复"
+        
+        # 2. 安装 dos2unix 并转换脚本换行符
+        echo "2. 安装 dos2unix..."
+        yum install -y dos2unix 2>&1 | tail -5
+        if [ -f /opt/security/security_hardening.sh ]; then
+            dos2unix /opt/security/security_hardening.sh
+            echo "✅ 脚本换行符已转换"
+        fi
+        
+        # 3. 安装依赖
+        echo "3. 安装依赖..."
+        yum install -y audit pam_pwquality cracklib chrony postfix 2>&1 | tail -10
+        echo "✅ 依赖已安装"
+        
+        echo "=== CentOS 7 修复完成 ==="
     fi
 }
 
@@ -190,6 +219,9 @@ main() {
     echo ""
     
     setup_test_user
+    echo ""
+    
+    fix_centos7
     echo ""
     
     echo "=== 配置完成 ($NODE_NAME) ==="
